@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Xml;
@@ -15,7 +14,6 @@ namespace AutoDocSig
 {
     class MainWindowVM : ObservableObject
     {
-        RSACryptoServiceProvider RSAKey;
         string inputDirectory;
         public String InputDirectory
         {
@@ -107,7 +105,6 @@ namespace AutoDocSig
             if (dialog.ShowDialog() == true)
             {
                 SignaturePath = dialog.FileName;
-                SignatureInizialization(SignaturePath);
                 IsReady = CheckParams();
             }
         }
@@ -115,6 +112,7 @@ namespace AutoDocSig
         void Work()
         {
             var l_filePathList = Directory.GetFiles(InputDirectory).ToList();
+            AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath);
             foreach (var l_filePath in l_filePathList)
             {
                 XmlDocument xmlDoc = new ()
@@ -122,53 +120,11 @@ namespace AutoDocSig
                     PreserveWhitespace = true
                 };
                 xmlDoc.Load(l_filePath);
-                SignXml(xmlDoc);
-                SaveSignedXml(xmlDoc);
+                l_signature.SignXml(xmlDoc);
+                l_signature.SaveSignedXml(xmlDoc, OutputDirectory);
                 xmlDoc.Save(l_filePath);
                 File.Delete(l_filePath);
             }
-        }
-
-        void SignatureInizialization(string _signaturePath)
-        {
-            CspParameters l_cspParams = new()
-            {
-                KeyContainerName = "XML_DSIG_RSA_KEY"
-            };
-            RSAKey = new(l_cspParams);            
-        }
-
-        void SignXml(XmlDocument _xmlDoc)
-        {
-            if (_xmlDoc == null)
-            {
-                throw new ArgumentException(null, nameof(_xmlDoc));
-            }
-            if (RSAKey == null)
-            {
-                throw new ArgumentException(null, nameof(RSAKey));
-
-            }
-            SignedXml signedXml = new (_xmlDoc)
-            {
-                SigningKey = RSAKey
-            };
-            Reference reference = new()
-            {
-                Uri = ""
-            };
-            XmlDsigEnvelopedSignatureTransform env = new();
-            reference.AddTransform(env);
-            signedXml.AddReference(reference);
-            signedXml.ComputeSignature();
-            XmlElement xmlDigitalSignature = signedXml.GetXml();
-            _xmlDoc.DocumentElement.AppendChild(_xmlDoc.ImportNode(xmlDigitalSignature, true));
-        }
-
-        void SaveSignedXml(XmlDocument _xmlDoc)
-        {             
-            var l_name = _xmlDoc.BaseURI.Split('/').Last();
-            _xmlDoc.Save(OutputDirectory + "//" + l_name);
         }
     }
 }
