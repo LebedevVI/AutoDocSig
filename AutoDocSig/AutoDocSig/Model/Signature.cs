@@ -31,22 +31,22 @@ namespace AutoDocSig.Model
                 throw new ArgumentException(null, nameof(RSAKey));
 
             }
-            SignedXml signedXml = new(_xmlDoc)
+            SignedXml l_signedXml = new(_xmlDoc)
             {
                 SigningKey = RSAKey
             };
-            Reference reference = new()
+            Reference l_reference = new()
             {
                 Uri = ""
             };
-            XmlDsigEnvelopedSignatureTransform env = new();
-            reference.AddTransform(env);
-            signedXml.AddReference(reference);
+            XmlDsigEnvelopedSignatureTransform l_envelopedSignatureTransform = new();
+            l_reference.AddTransform(l_envelopedSignatureTransform);
+            l_signedXml.AddReference(l_reference);
 
-            signedXml.KeyInfo = GetCertInfo();
-            signedXml.ComputeSignature();
-            XmlElement xmlDigitalSignature = signedXml.GetXml();
-            _xmlDoc.DocumentElement.AppendChild(_xmlDoc.ImportNode(xmlDigitalSignature, true));
+            l_signedXml.KeyInfo = GetCertInfo();
+            l_signedXml.ComputeSignature();
+            XmlElement l_xmlDigitalSignature = l_signedXml.GetXml();
+            _xmlDoc.DocumentElement.AppendChild(_xmlDoc.ImportNode(l_xmlDigitalSignature, true));
         }
 
         public void SaveSignedXml(XmlDocument _xmlDoc, string _path)

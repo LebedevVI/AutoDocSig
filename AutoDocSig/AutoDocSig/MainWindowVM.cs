@@ -111,7 +111,7 @@ namespace AutoDocSig
 
         void Work()
         {
-            var l_filePathList = Directory.GetFiles(InputDirectory).ToList();
+            var l_filePathList = Directory.GetFiles(InputDirectory, "*.xml");
             AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath);
             foreach (var l_filePath in l_filePathList)
             {
