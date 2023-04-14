@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Xml;
 
@@ -11,15 +12,17 @@ namespace AutoDocSig.Model
 {
     class Signature
     {
+        X509Certificate2 certificate;
         RSACryptoServiceProvider RSAKey;
         public Signature(string _signaturePath)
         {
-            DigitalSignOptions options = new DigitalSignOptions("certificate.pfx");
-            CspParameters l_cspParams = new()
+            certificate = new X509Certificate2(_signaturePath, "123");
+            RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPrivateKey();
+           /* CspParameters l_cspParams = new()
             {
                 KeyContainerName = "XML_DSIG_RSA_KEY"
             };
-            RSAKey = new(l_cspParams);
+            RSAKey = new(l_cspParams);*/
         }
 
         public void SignXml(XmlDocument _xmlDoc)
