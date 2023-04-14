@@ -17,12 +17,7 @@ namespace AutoDocSig.Model
         public Signature(string _signaturePath)
         {
             certificate = new X509Certificate2(_signaturePath, "123");
-            RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPrivateKey();
-           /* CspParameters l_cspParams = new()
-            {
-                KeyContainerName = "XML_DSIG_RSA_KEY"
-            };
-            RSAKey = new(l_cspParams);*/
+            RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPublicKey();
         }
 
         public void SignXml(XmlDocument _xmlDoc)
@@ -47,15 +42,30 @@ namespace AutoDocSig.Model
             XmlDsigEnvelopedSignatureTransform env = new();
             reference.AddTransform(env);
             signedXml.AddReference(reference);
+
+            signedXml.KeyInfo = GetCertInfo();
             signedXml.ComputeSignature();
             XmlElement xmlDigitalSignature = signedXml.GetXml();
             _xmlDoc.DocumentElement.AppendChild(_xmlDoc.ImportNode(xmlDigitalSignature, true));
         }
 
-         public void SaveSignedXml(XmlDocument _xmlDoc, string _path)
+        public void SaveSignedXml(XmlDocument _xmlDoc, string _path)
         {
             var l_name = _xmlDoc.BaseURI.Split('/').Last();
             _xmlDoc.Save(_path + "//" + l_name);
         }
+
+        KeyInfo GetCertInfo()
+        {
+            KeyInfo l_keyInfo = new KeyInfo();
+            KeyInfoX509Data l_keydata = new KeyInfoX509Data(certificate);
+            X509IssuerSerial l_serial = new X509IssuerSerial();
+            l_serial.IssuerName = certificate.IssuerName.ToString();
+            l_serial.SerialNumber = certificate.SerialNumber;
+            l_keydata.AddIssuerSerial(l_serial.IssuerName, l_serial.SerialNumber);
+            l_keyInfo.AddClause(l_keydata);
+            return l_keyInfo;
+        }
+
     }
 }
