@@ -17,8 +17,9 @@ namespace AutoDocSig
         string inputDirectory;
         public String InputDirectory
         {
-            get 
-            { return inputDirectory; 
+            get
+            {
+                return inputDirectory;
             }
             set
             {
@@ -78,10 +79,24 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        bool isWorked;
+        public bool IsWorked
+        {
+            get
+            {
+                return isWorked;
+            }
+            set
+            {
+                isWorked = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand SelectInputDirectoryButtonClick { get; set; }
         public RelayCommand SelectOutputDirectoryButtonClick { get; set; }
         public RelayCommand SelectSignatureButtonClick { get; set; }
         public RelayCommand DoWorkButtonClick { get; set; }
+        public RelayCommand StopWorkButtonCLick { get; set; }
 
         public MainWindowVM()
         {
@@ -89,6 +104,7 @@ namespace AutoDocSig
             SelectOutputDirectoryButtonClick = new RelayCommand(o => SelectOutputDirectory());
             SelectSignatureButtonClick = new RelayCommand(o => SelectSignature());
             DoWorkButtonClick = new RelayCommand(o => Work());
+            StopWorkButtonCLick = new RelayCommand(o => StopWork());
         }
 
         bool CheckParams()
@@ -101,7 +117,7 @@ namespace AutoDocSig
         }
 
         void SelectInputDirectory()
-        {           
+        {
             InputDirectory = WpfFolderDialog.Win32API.SelectDirectory();
             IsReady = CheckParams();
         }
@@ -121,12 +137,32 @@ namespace AutoDocSig
                 IsReady = CheckParams();
             }
         }
-
-        void Work()
+        AutoDocSig.Model.Signature sig;
+        async void Work()
+        {
+            IsWorked = true;
+            IsReady = false;
+            AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath, SignaturePassword);
+            sig = l_signature;
+            while (IsWorked)
+            {
+                await DoWorkAsync();
+            }
+        }
+        Task DoWorkAsync()
+        {
+            return Task.Run(() => DoWork());
+        }
+        void DoWork()
         {
             var l_filePathList = Directory.GetFiles(InputDirectory, "*.xml");
-            AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath, SignaturePassword);
-            l_signature.SignFiles(l_filePathList, OutputDirectory);
+            sig.SignFiles(l_filePathList, OutputDirectory);
+        }
+
+        void StopWork()
+        {
+            IsWorked = false;
+            IsReady = true;
         }
     }
 }

@@ -53,6 +53,9 @@
             <Button Content="В работу" 
                 Command="{Binding DoWorkButtonClick}"
                 IsEnabled="{Binding IsReady}"/>
+            <Button Content="Остановить" 
+                Command="{Binding StopWorkButtonCLick}"
+                IsEnabled="{Binding IsWorked}" Grid.Column="1" Margin="67,0,67,0"/>
         </Grid>
     </Grid>
 </Window>
