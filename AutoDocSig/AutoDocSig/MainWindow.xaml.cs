@@ -25,5 +25,10 @@ namespace AutoDocSig
             InitializeComponent();
             DataContext = new MainWindowVM();
         }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            ((MainWindowVM)DataContext).SignaturePassword = ((PasswordBox)sender).Password;
+        }
     }
 }

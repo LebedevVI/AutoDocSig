@@ -52,6 +52,19 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        string signaturePassword;
+        public String SignaturePassword
+        {
+            get
+            {
+                return signaturePassword;
+            }
+            set
+            {
+                signaturePassword = value;
+                OnPropertyChanged();
+            }
+        }
         bool isReady;
         public bool IsReady
         {
@@ -112,7 +125,7 @@ namespace AutoDocSig
         void Work()
         {
             var l_filePathList = Directory.GetFiles(InputDirectory, "*.xml");
-            AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath);
+            AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath, SignaturePassword);
             l_signature.SignFiles(l_filePathList, OutputDirectory);
         }
     }

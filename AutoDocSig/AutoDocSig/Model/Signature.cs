@@ -16,11 +16,11 @@ namespace AutoDocSig.Model
         Logger logger = new Logger(AppDomain.CurrentDomain.BaseDirectory);
         X509Certificate2 certificate;
         RSACryptoServiceProvider RSAKey;
-        public Signature(string _signaturePath)
+        public Signature(string _signaturePath, string _password)
         {
             try
             {
-                certificate = new X509Certificate2(_signaturePath, "123");
+                certificate = new X509Certificate2(_signaturePath, _password);
                 logger.Write("Сертификат " + certificate.FriendlyName + " загружен");
                 RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPublicKey();
                 if (RSAKey != null)

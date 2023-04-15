@@ -17,12 +17,12 @@ namespace AutoDocSig.Model
             {
                 Directory.CreateDirectory(pathToLog);
             }
-            fileFullName = Path.Combine(pathToLog, string.Format("{0}_{1:dd.MM.yyy}.log"));
+            fileFullName = Path.Combine(pathToLog, string.Format("{0}_{1:dd.MM.yyy}.log", AppDomain.CurrentDomain.FriendlyName, DateTime.Now));
         }
 
         public void Write(string _log)
         {
-            string l_fullText = string.Format("[{0:dd.MM.yyy HH:mm:ss.fff}] [{1}.{2}()] {3}\r\n", DateTime.Now, _log);
+            string l_fullText = string.Format("[{0:dd.MM.yyy HH:mm:ss.fff}] [{1}]\r\n", DateTime.Now, _log);
             File.AppendAllText(fileFullName, l_fullText);
         }
 
