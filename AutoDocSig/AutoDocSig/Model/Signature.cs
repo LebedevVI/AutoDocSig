@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,12 +13,50 @@ namespace AutoDocSig.Model
 {
     class Signature
     {
+        Logger logger = new Logger(AppDomain.CurrentDomain.BaseDirectory);
         X509Certificate2 certificate;
         RSACryptoServiceProvider RSAKey;
         public Signature(string _signaturePath)
         {
-            certificate = new X509Certificate2(_signaturePath, "123");
-            RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPublicKey();
+            try
+            {
+                certificate = new X509Certificate2(_signaturePath, "123");
+                logger.Write("Сертификат " + certificate.FriendlyName + " загружен");
+                RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPublicKey();
+                if (RSAKey != null)
+                {
+                    logger.Write("Ключ инициализирован");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Write(e);
+            }
+        }
+
+        public void SignFiles(string [] _filePathList, string _outputDirectory)
+        {
+            try
+            {
+                foreach (var l_filePath in _filePathList)
+                {
+                    XmlDocument xmlDoc = new()
+                    {
+                        PreserveWhitespace = true
+                    };
+                    xmlDoc.Load(l_filePath);
+                    SignXml(xmlDoc);
+                    logger.Write("Файл " + l_filePath + " подписан");
+                    SaveSignedXml(xmlDoc, _outputDirectory);
+                    logger.Write("Подписанный файл " + l_filePath + " сохранен в директорию " + _outputDirectory);
+                    xmlDoc.Save(l_filePath);
+                    File.Delete(l_filePath);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Write(e);
+            }
         }
 
         public void SignXml(XmlDocument _xmlDoc)
@@ -42,7 +81,6 @@ namespace AutoDocSig.Model
             XmlDsigEnvelopedSignatureTransform l_envelopedSignatureTransform = new();
             l_reference.AddTransform(l_envelopedSignatureTransform);
             l_signedXml.AddReference(l_reference);
-
             l_signedXml.KeyInfo = GetCertInfo();
             l_signedXml.ComputeSignature();
             XmlElement l_xmlDigitalSignature = l_signedXml.GetXml();

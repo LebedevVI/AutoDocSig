@@ -113,18 +113,7 @@ namespace AutoDocSig
         {
             var l_filePathList = Directory.GetFiles(InputDirectory, "*.xml");
             AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath);
-            foreach (var l_filePath in l_filePathList)
-            {
-                XmlDocument xmlDoc = new ()
-                {
-                    PreserveWhitespace = true
-                };
-                xmlDoc.Load(l_filePath);
-                l_signature.SignXml(xmlDoc);
-                l_signature.SaveSignedXml(xmlDoc, OutputDirectory);
-                xmlDoc.Save(l_filePath);
-                File.Delete(l_filePath);
-            }
+            l_signature.SignFiles(l_filePathList, OutputDirectory);
         }
     }
 }
