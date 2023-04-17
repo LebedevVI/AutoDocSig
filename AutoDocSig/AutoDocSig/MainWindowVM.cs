@@ -66,6 +66,19 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        bool detached;
+        public bool Detached
+        {
+            get
+            {
+                return detached;
+            }
+            set
+            {
+                detached = value;
+                OnPropertyChanged();
+            }
+        }
         bool isReady;
         public bool IsReady
         {
@@ -137,13 +150,12 @@ namespace AutoDocSig
                 IsReady = CheckParams();
             }
         }
-        AutoDocSig.Model.Signature sig;
+        AutoDocSig.Model.Signature signature;
         async void Work()
         {
             IsWorked = true;
             IsReady = false;
-            AutoDocSig.Model.Signature l_signature = new AutoDocSig.Model.Signature(SignaturePath, SignaturePassword);
-            sig = l_signature;
+            signature = new AutoDocSig.Model.Signature(SignaturePath, SignaturePassword, Detached);
             while (IsWorked)
             {
                 await DoWorkAsync();
@@ -156,7 +168,7 @@ namespace AutoDocSig
         void DoWork()
         {
             var l_filePathList = Directory.GetFiles(InputDirectory, "*.xml");
-            sig.SignFiles(l_filePathList, OutputDirectory);
+            signature.SignFiles(l_filePathList, OutputDirectory);
         }
 
         void StopWork()

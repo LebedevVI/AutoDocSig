@@ -7,26 +7,32 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
+using System.Security.Cryptography.Pkcs;
 using System.Xml;
-
 namespace AutoDocSig.Model
 {
     class Signature
     {
         Logger logger = new Logger(AppDomain.CurrentDomain.BaseDirectory);
         X509Certificate2 certificate;
-        RSACryptoServiceProvider RSAKey;
-        public Signature(string _signaturePath, string _password)
+        bool detached;
+        //RSACryptoServiceProvider RSAKey;
+        public Signature(string _signaturePath, string _password, bool _detached)
         {
             try
             {
+                detached = _detached;
                 certificate = new X509Certificate2(_signaturePath, _password);
                 logger.Write("Сертификат " + certificate.FriendlyName + " загружен");
-                RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPublicKey();
+                /*RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPublicKey();
                 if (RSAKey != null)
                 {
                     logger.Write("Ключ инициализирован");
                 }
+                else
+                {
+                    RSAKey = (RSACryptoServiceProvider)RSA.Create();
+                }*/
             }
             catch (Exception e)
             {
@@ -40,7 +46,7 @@ namespace AutoDocSig.Model
             {
                 foreach (var l_filePath in _filePathList)
                 {
-                    XmlDocument xmlDoc = new()
+                    /*XmlDocument xmlDoc = new()
                     {
                         PreserveWhitespace = true
                     };
@@ -50,7 +56,13 @@ namespace AutoDocSig.Model
                     SaveSignedXml(xmlDoc, _outputDirectory);
                     logger.Write("Подписанный файл " + l_filePath + " сохранен в директорию " + _outputDirectory);
                     xmlDoc.Save(l_filePath);
-                    File.Delete(l_filePath);
+                    File.Delete(l_filePath);*/
+                    var l_fileAsByteArray = ReadFileAsByteArray(l_filePath);
+                    logger.Write("Файл " + l_filePath + " загружен");
+                    l_fileAsByteArray = SignFile(certificate, l_fileAsByteArray, detached);
+                    logger.Write("Файл " + l_filePath + " подписан");
+                    SaveFile(l_filePath, l_fileAsByteArray);
+                    logger.Write("Файл " + l_filePath + " сохранен");
                 }
             }
             catch (Exception e)
@@ -59,7 +71,28 @@ namespace AutoDocSig.Model
             }
         }
 
-        public void SignXml(XmlDocument _xmlDoc)
+        public byte[] ReadFileAsByteArray(string _path)
+        {
+            byte[] content;
+            content = File.ReadAllBytes(_path);
+            return content;
+        }
+
+        public byte[] SignFile(X509Certificate2 certificate, byte[] data, bool detached)
+        {
+            var contentInfo = new ContentInfo(data);
+            var signedCms = new SignedCms(contentInfo, detached);
+            var cmsSigner = new CmsSigner(SubjectIdentifierType.IssuerAndSerialNumber, certificate);
+            signedCms.ComputeSignature(cmsSigner, true);
+            return signedCms.Encode();
+        }
+        public void SaveFile(string _path, byte[] fileContent)
+        {
+            var l_name = _path.Split('/').Last();
+            File.WriteAllBytes(_path + ".sig", fileContent);
+        }
+
+        /*public void SignXml(XmlDocument _xmlDoc)
         {
             if (_xmlDoc == null)
             {
@@ -103,7 +136,6 @@ namespace AutoDocSig.Model
             l_keydata.AddIssuerSerial(l_serial.IssuerName, l_serial.SerialNumber);
             l_keyInfo.AddClause(l_keydata);
             return l_keyInfo;
-        }
-
+        }*/
     }
 }

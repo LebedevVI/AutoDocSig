@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoDocSig"
         mc:Ignorable="d"
-        Title="MainWindow" Height="394" Width="609">
+        Title="Автоматическая подпись документов" Height="394" Width="609">
     <Grid HorizontalAlignment="Left" Width="599">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="281*"/>
@@ -46,6 +46,14 @@
             <PasswordBox Margin="0,49,71,5" Grid.Column="3" PasswordChanged="PasswordBox_PasswordChanged"/>
         </Grid>
         <Grid Grid.ColumnSpan="4" Margin="0,226,71,108" HorizontalAlignment="Right" Width="518">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="96*"/>
+                <ColumnDefinition Width="163*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Подпись в отдельном файла (да) или в составе документа (нет)?" Grid.ColumnSpan="2" Margin="0,0,73,0"/>
+            <CheckBox IsChecked="{Binding Path=Detached, Mode=TwoWay}" Grid.Column="1" Margin="266,0,10,0"/>
+        </Grid>
+        <Grid Grid.ColumnSpan="4" Margin="0,295,71,39" HorizontalAlignment="Right" Width="518">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="96*"/>
                 <ColumnDefinition Width="163*"/>
