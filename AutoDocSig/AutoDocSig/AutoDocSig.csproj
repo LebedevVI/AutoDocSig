@@ -2,13 +2,15 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon />
     <StartupObject />
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LibCore.Windows" Version="2023.3.16.1" />
     <PackageReference Include="WpfFolderDialog" Version="2.0.0" />
   </ItemGroup>
 
