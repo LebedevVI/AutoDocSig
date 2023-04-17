@@ -8,6 +8,9 @@ namespace AutoDocSig
 {
     class MainWindowVM : ObservableObject
     {
+        /// <summary>
+        /// Директория с файлами на подпись
+        /// </summary>
         string inputDirectory;
         public String InputDirectory
         {
@@ -21,6 +24,9 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Директория для вывода подписанных файлов
+        /// </summary>
         string otputDirectory;
         public String OutputDirectory
         {
@@ -34,6 +40,9 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Расположение файла с сертификатом подписи
+        /// </summary>
         string signaturePath;
         public String SignaturePath
         {
@@ -47,6 +56,9 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Пароль для сертификата подписи
+        /// </summary>
         string signaturePassword;
         public String SignaturePassword
         {
@@ -60,6 +72,9 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Отдельная подпись - true; подпись в файле - false
+        /// </summary>
         bool detached;
         public bool Detached
         {
@@ -73,6 +88,9 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Все данные для запуска в работу программы готовы - true; чего-то не хватает - false
+        /// </summary>
         bool isReady;
         public bool IsReady
         {
@@ -86,6 +104,9 @@ namespace AutoDocSig
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Программа в работе (мониторит входную папку) - true; ожидает запуска - false
+        /// </summary>
         bool isWorked;
         public bool IsWorked
         {
@@ -113,7 +134,10 @@ namespace AutoDocSig
             DoWorkButtonClick = new RelayCommand(o => Work());
             StopWorkButtonCLick = new RelayCommand(o => StopWork());
         }
-
+        /// <summary>
+        /// Проверка заполненности всех параметров: входная директория, выходная директория, сертификат
+        /// </summary>
+        /// <returns>Все данные для запуска в работу программы готовы - true; чего-то не хватает - false</returns>
         bool CheckParams()
         {
             if (String.IsNullOrEmpty(InputDirectory) || String.IsNullOrEmpty(OutputDirectory) || String.IsNullOrEmpty(SignaturePath))
@@ -122,19 +146,25 @@ namespace AutoDocSig
             }
             return true;
         }
-
+        /// <summary>
+        /// Пользователь выбрал входную директорию
+        /// </summary>
         void SelectInputDirectory()
         {
             InputDirectory = WpfFolderDialog.Win32API.SelectDirectory();
             IsReady = CheckParams();
         }
-
+        /// <summary>
+        ///  Пользователь выбрал выходную директорию
+        /// </summary>
         void SelectOutputDirectory()
         {
             OutputDirectory = WpfFolderDialog.Win32API.SelectDirectory();
             IsReady = CheckParams();
         }
-
+        /// <summary>
+        /// Пользователь выбрал файл с сертификатом подписи
+        /// </summary>
         void SelectSignature()
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -144,7 +174,13 @@ namespace AutoDocSig
                 IsReady = CheckParams();
             }
         }
+        /// <summary>
+        /// Используемая подпись
+        /// </summary>
         AutoDocSig.Model.Signature signature;
+        /// <summary>
+        /// Пользователь нажал кнопку 'В работу'
+        /// </summary>
         async void Work()
         {
             IsWorked = true;
@@ -155,16 +191,25 @@ namespace AutoDocSig
                 await DoWorkAsync();
             }
         }
+        /// <summary>
+        /// Асинхронный запуск просмотра файлов во входной директории и их подписи
+        /// </summary>
+        /// <returns></returns>
         Task DoWorkAsync()
         {
             return Task.Run(() => DoWork());
         }
+        /// <summary>
+        /// Просмотр файлов во входной директории и их подпись
+        /// </summary>
         void DoWork()
         {
             var l_filePathList = Directory.GetFiles(InputDirectory, "*.xml");
             signature.SignFiles(l_filePathList, OutputDirectory);
         }
-
+        /// <summary>
+        /// Пользователь нажал кнопку 'Остановить'
+        /// </summary>
         void StopWork()
         {
             IsWorked = false;
