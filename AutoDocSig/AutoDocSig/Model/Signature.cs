@@ -24,14 +24,18 @@ namespace AutoDocSig.Model
                 detached = _detached;
                 certificate = new X509Certificate2(_signaturePath, _password);
                 logger.Write("Сертификат " + certificate.FriendlyName + " загружен");
-                /*RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPublicKey();
+                /*RSAKey = (RSACryptoServiceProvider)certificate.GetRSAPrivateKey();
                 if (RSAKey != null)
                 {
                     logger.Write("Ключ инициализирован");
                 }
                 else
                 {
-                    RSAKey = (RSACryptoServiceProvider)RSA.Create();
+                    CspParameters cspParams = new()
+                    {
+                        KeyContainerName = "XML_DSIG_RSA_KEY"
+                    };
+                    RSAKey = new(cspParams);
                 }*/
             }
             catch (Exception e)

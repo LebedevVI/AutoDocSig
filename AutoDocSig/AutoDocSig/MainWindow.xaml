@@ -5,65 +5,107 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoDocSig"
         mc:Ignorable="d"
-        Title="Автоматическая подпись документов" Height="394" Width="609">
-    <Grid HorizontalAlignment="Left" Width="599">
+        Title="Автоматическая подпись документов" Height="400" Width="600"
+        MinHeight="250" MinWidth="460" SizeToContent="Height" WindowStartupLocation="CenterScreen">
+    <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="281*"/>
-            <ColumnDefinition Width="123*"/>
-            <ColumnDefinition Width="0*"/>
-            <ColumnDefinition Width="195*"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*" MinWidth="200"/>
+            <ColumnDefinition Width="35"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.ColumnSpan="4" Margin="0,10,71,324" HorizontalAlignment="Right" Width="518">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0*"/>
-                <ColumnDefinition Width="96*"/>
-                <ColumnDefinition Width="163*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Входная папка" Grid.ColumnSpan="2" Margin="0,0,96,0"/>
-            <TextBlock Text="{Binding InputDirectory}" Margin="0,0,79,0" Grid.Column="2"/>
-            <Button Content="..." Command="{Binding SelectInputDirectoryButtonClick}" Grid.Column="2" Margin="252,0,0,0"/>
-        </Grid>
-        <Grid Grid.ColumnSpan="4" Margin="0,59,71,275" HorizontalAlignment="Right" Width="518">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="96*"/>
-                <ColumnDefinition Width="163*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Выходная папка" Margin="0,0,96,0"/>
-            <TextBlock Text="{Binding OutputDirectory}" Margin="0,0,72,0" Grid.Column="1"/>
-            <Button Content="..." Command="{Binding SelectOutputDirectoryButtonClick}" Grid.Column="1" RenderTransformOrigin="0.495,1.203" Margin="259,0,-5,0"/>
-        </Grid>
-        <Grid Grid.ColumnSpan="4" Margin="0,108,71,173" HorizontalAlignment="Right" Width="518">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="89*"/>
-                <ColumnDefinition Width="93*"/>
-                <ColumnDefinition Width="336*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Электронно-цифровая подпись" Grid.ColumnSpan="3" Margin="0,0,2,48"/>
-            <TextBlock Text="{Binding SignaturePath}" Margin="3,0,76,48" Grid.Column="3"/>
-            <Button Content="..." Command="{Binding SelectSignatureButtonClick}" Grid.Column="3" RenderTransformOrigin="0.495,1.203" Margin="265,0,0,48"/>
-            <TextBlock Text="Пароль" Grid.ColumnSpan="3" Margin="2,49,0,-1"/>
-            <PasswordBox Margin="0,49,71,5" Grid.Column="3" PasswordChanged="PasswordBox_PasswordChanged"/>
-        </Grid>
-        <Grid Grid.ColumnSpan="4" Margin="0,226,71,108" HorizontalAlignment="Right" Width="518">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="96*"/>
-                <ColumnDefinition Width="163*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Подпись в отдельном файла (да) или в составе документа (нет)?" Grid.ColumnSpan="2" Margin="0,0,73,0"/>
-            <CheckBox IsChecked="{Binding Path=Detached, Mode=TwoWay}" Grid.Column="1" Margin="266,0,10,0"/>
-        </Grid>
-        <Grid Grid.ColumnSpan="4" Margin="0,295,71,39" HorizontalAlignment="Right" Width="518">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="96*"/>
-                <ColumnDefinition Width="163*"/>
-            </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- Входная папка -->
+        <TextBlock Text="Входная папка"
+                   FontWeight="DemiBold"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Margin="5"/>
+        <TextBlock Text="{Binding InputDirectory, TargetNullValue='укажите каталог'}"
+                   FontStyle="Italic"
+                   Grid.Row="0" 
+                   Grid.Column="1"
+                   Margin="5"/>
+        <Button Content="..." Command="{Binding SelectInputDirectoryButtonClick}" 
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="2 5"/>
+        <!-- Выходная папка -->
+        <TextBlock Text="Выходная папка" 
+                   FontWeight="DemiBold"
+                   Grid.Row="1"
+                   Grid.Column="0"
+                   Margin="5"/>
+        <TextBlock Text="{Binding OutputDirectory, TargetNullValue='укажите каталог'}" 
+                   FontStyle="Italic"
+                   Grid.Row="1" 
+                   Grid.Column="1"
+                   Margin="5"/>
+        <Button Content="..." Command="{Binding SelectOutputDirectoryButtonClick}" 
+                Grid.Row="1"
+                Grid.Column="2"
+                Margin="2 5"/>
+        <!-- Электронно-цифровая подпись -->
+        <TextBlock Text="Электронно-цифровая подпись"
+                   FontWeight="DemiBold"
+                   Grid.Row="2" 
+                   Grid.Column="0"
+                   Margin="5"/>
+        <TextBlock Text="{Binding SignaturePath, TargetNullValue='укажите файл'}"
+                   FontStyle="Italic"
+                   Grid.Row="2" 
+                   Grid.Column="1"
+                   Margin="5"/>
+        <Button Content="..." Command="{Binding SelectSignatureButtonClick}"
+                Grid.Row="2" 
+                Grid.Column="2"
+                Margin="2 5"/>
+        <!-- Пароль -->
+        <TextBlock Text="Пароль" 
+                   FontWeight="DemiBold"
+                   Grid.Row="3" 
+                   Grid.Column="0"
+                   Margin="5"/>
+        <PasswordBox PasswordChanged="PasswordBox_PasswordChanged"
+                     Grid.Row="3" 
+                     Grid.Column="1"
+                     Grid.ColumnSpan="2"
+                     Margin="5"/>
+        <!-- Подпись в отдельном файле -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Grid.Row="4" 
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3">
+            <TextBlock Text="Подпись в отдельном файла (да) или в составе документа (нет)?" 
+                       FontWeight="DemiBold"
+                       Margin="5"/>
+            <CheckBox IsChecked="{Binding Path=Detached, Mode=TwoWay}" 
+                      Margin="5"/>
+        </StackPanel>
+        <!-- Кнопки -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                    Grid.Row="5" 
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Height="50"
+                    Margin="5">
             <Button Content="В работу" 
-                Command="{Binding DoWorkButtonClick}"
-                IsEnabled="{Binding IsReady}"/>
+                    Command="{Binding DoWorkButtonClick}"
+                    IsEnabled="{Binding IsReady}"
+                    Margin="5"
+                    Width="100"/>
             <Button Content="Остановить" 
-                Command="{Binding StopWorkButtonCLick}"
-                IsEnabled="{Binding IsWorked}" Grid.Column="1" Margin="67,0,67,0"/>
-        </Grid>
+                    Command="{Binding StopWorkButtonCLick}"
+                    IsEnabled="{Binding IsWorked}" 
+                    Margin="5"
+                    Width="100"/>
+
+        </StackPanel>
     </Grid>
 </Window>
