@@ -80,9 +80,9 @@ namespace AutoDocSig.Model
         /// <summary>
         /// Подпись файла
         /// </summary>
-        /// <param name="certificate">Подписывающий сертификат безопасности</param>
-        /// <param name="data">Подписываемый файл в виде массива байтов</param>
-        /// <param name="detached">Отдельная подпись - true; подпись в файле - false</param>
+        /// <param name="_certificate">Подписывающий сертификат безопасности</param>
+        /// <param name="_data">Подписываемый файл в виде массива байтов</param>
+        /// <param name="_detached">Отдельная подпись - true; подпись в файле - false</param>
         /// <returns>Подписанный файл</returns>
         public byte[] SignFile(X509Certificate2 _certificate, byte[] _signedFile, bool _detached)
         {
@@ -98,10 +98,11 @@ namespace AutoDocSig.Model
         /// <param name="_path">Путь к файлу</param>
         /// <param name="_outputDirectory">Выходная директория</param>
         /// <param name="_fileContent">Файл в виде массива байтов</param>
-        public void SaveFile(string _path, string _outputDirectory, byte[] _fileContent)
+        /// <param name="_detached">Отдельная подпись - true; подпись в файле - false</param>
+        public void SaveFile(string _path, string _outputDirectory, byte[] _fileContent, bool _detached)
         {
             var l_name = _path.Split('/').Last();
-            File.WriteAllBytes(_outputDirectory + _path + ".sig", _fileContent);
+            _detached ? File.WriteAllBytes(_outputDirectory + _path + ".sig", _fileContent) : File.WriteAllBytes(_outputDirectory + _path, _fileContent);
         }
     }
 }
